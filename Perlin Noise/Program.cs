@@ -15,7 +15,7 @@ namespace Perlin_Noise
         public static uint _SWidth = VideoMode.DesktopMode.Width;
         public static uint _SHeight = VideoMode.DesktopMode.Height;
 
-        const uint _ResMult = 5;
+        const uint _ResMult = 10;
         public static uint _Width = _SWidth / _ResMult;
         public static uint _Height = _SHeight / _ResMult;
 
@@ -27,7 +27,7 @@ namespace Perlin_Noise
         public static Color[] cpixels = new Color[_Width * _Height];
         public static Color[,] field = new Color[_Width, _Height];
         public static Color[,] BG = new Color[_Width, _Height];
-        public static int dotsAmount = 100;                                                   // Amount of dots
+        public static int dotsAmount = 1000;                                                   // Amount of dots
         public static Vector2F[] dots = new Vector2F[dotsAmount + 1];
         public static Vector2F[] dotsVels = new Vector2F[dotsAmount + 1];
 
@@ -53,11 +53,11 @@ namespace Perlin_Noise
 
         static float mouseDir = 0;
 
-        static void OnMouseScroll(object sender, EventArgs e)
-        {
-            MouseWheelScrollEventArgs mouseWE = (MouseWheelScrollEventArgs)e;
-            lineLength += (int)mouseWE.Delta;
-        }
+        //static void OnMouseScroll(object sender, EventArgs e)
+        //{
+        //    MouseWheelScrollEventArgs mouseWE = (MouseWheelScrollEventArgs)e;
+        //    lineLength += (int)mouseWE.Delta;
+        //}
 
         static void Main(string[] args)
         {
@@ -80,27 +80,30 @@ namespace Perlin_Noise
             noise.SetFractalType(FastNoiseLite.FractalType.FBm);
             noise.SetFractalOctaves(5);
             RenderWindow window = new RenderWindow(new SFML.Window.VideoMode(_SWidth, _SHeight), "Pixels");
-            window.MouseWheelScrolled += new EventHandler<MouseWheelScrollEventArgs>(OnMouseScroll);
+            //window.MouseWheelScrolled += new EventHandler<MouseWheelScrollEventArgs>(OnMouseScroll);
             window.SetVerticalSyncEnabled(false);
 
 
-            int amount = 3;                                                           //Amount of paws
+            int amount = 5;                                                           //Amount of paws
             float da = (float)(Math.PI * 2 / amount);
             InverseKinematicsReacher[] paws = new InverseKinematicsReacher[amount];
             Vector2F[] positions = new Vector2F[amount];
             int counter = 0;
-            for (float a = mouseDir; a < mouseDir + Math.PI * 2; a += da)
+            for (float a = 0; a < Math.PI * 2; a += da)
             {
                 float x = (float)((Math.Cos(a) * 10));
                 float y = (float)((Math.Sin(a) * 10));
-                paws[counter] = new InverseKinematicsReacher(x, y, 15, 3);
+                paws[counter] = new InverseKinematicsReacher(x, y, 20, 4);
                 paws[counter].Base = new Vector2F(x, y);
                 //paws[counter].segments[0].Length /= 2;
                 positions[counter] = new Vector2F(x, y);
                 counter++;
             }
 
-
+            foreach (InverseKinematicsReacher paw in paws)
+            {
+                paw.Target = dots[new Random().Next(0, dots.Length)];
+            }
 
 
             window.SetMouseCursorVisible(true);
@@ -116,16 +119,16 @@ namespace Perlin_Noise
             {
                 Update();
 
-                da = (float)(Math.PI * 2 / amount);
-                counter = 0;
-                for (float a = (float)(mouseDir * Math.PI); a < mouseDir * Math.PI + Math.PI * 2; a += da)
-                {
-                    float x = (float)((Math.Cos(a) * 10));
-                    float y = (float)((Math.Sin(a) * 10));
-                    //paws[counter].segments[0].Length /= 2;
-                    positions[counter] = new Vector2F(x, y);
-                    counter++;
-                }
+                //da = (float)(Math.PI * 2 / amount);
+                //counter = 0;
+                //for (float a = (float)(mouseDir + Math.PI); a < mouseDir + Math.PI * 2; a += da)
+                //{
+                //    float x = (float)((Math.Cos(a) * 10));
+                //    float y = (float)((Math.Sin(a) * 10));
+                //    //paws[counter].segments[0].Length /= 2;
+                //    positions[counter] = new Vector2F(x, y);
+                //    counter++;
+                //}
 
                 window.DispatchEvents();
                 //window.Clear();
@@ -141,32 +144,32 @@ namespace Perlin_Noise
                 int mouseMultInt = Convert.ToInt32(mouseMult);
 
                 //z = Convert.ToInt32(CurrentTick % Convert.ToDouble(_Z));
-                if (Keyboard.IsKeyPressed(Keyboard.Key.W))
-                    yOffset--;
-                if (Keyboard.IsKeyPressed(Keyboard.Key.S))
-                    yOffset++;
-                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
-                    xOffset--;
-                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
-                    xOffset++;
-                if (Keyboard.IsKeyPressed(Keyboard.Key.Q))
-                    zOffset++;
-                if (Keyboard.IsKeyPressed(Keyboard.Key.E))
-                    zOffset--;
-                if (Keyboard.IsKeyPressed(Keyboard.Key.LShift))
-                    fOffset += 0.0001f;
-                if (Keyboard.IsKeyPressed(Keyboard.Key.Space))
-                    fOffset -= 0.0001f;
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.W))
+                //    yOffset--;
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.S))
+                //    yOffset++;
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                //    xOffset--;
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                //    xOffset++;
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.Q))
+                //    zOffset++;
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.E))
+                //    zOffset--;
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.LShift))
+                //    fOffset += 0.0001f;
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.Space))
+                //    fOffset -= 0.0001f;
 
                 if (Keyboard.IsKeyPressed(Keyboard.Key.Escape))
                     window.Close();
-                if (Keyboard.IsKeyPressed(Keyboard.Key.F5))
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.F5))
 
 
-                    if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
-                        z++;
-                if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
-                    z--;
+                //    if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
+                //        z++;
+                //if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
+                //    z--;
 
 
                 for (int y = 0; y < _Height; y++)
@@ -178,19 +181,29 @@ namespace Perlin_Noise
 
                 for (int i = 0; i < dots.Length - 1; i++)
                 {
-                    if (PrevTick + 1 == CurrentTick)
-                    {
-                        if ((dots[i] + dotsVels[i]).X > _Width - 1)
-                            dotsVels[i].X *= -1;
-                        if ((dots[i] + dotsVels[i]).X < 0)
-                            dotsVels[i].X *= -1;
-                        if ((dots[i] + dotsVels[i]).Y > _Height - 1)
-                            dotsVels[i].Y *= -1;
-                        if ((dots[i] + dotsVels[i]).Y < 0)
-                            dotsVels[i].Y *= -1;
-                        dots[i] += dotsVels[i];
-                    }
-                    field[(int)dots[i].X, (int)dots[i].Y] = Color.Red;
+
+                    //dotsVels[i] = (dots[i] - paws[0].segments[paws[0].segments.Length - 1].End).Normalized * 0.5f;
+                    //if ((int)(dotsVels[i] + dots[i]).X < _Width - 1)
+                    //    if ((int)(dotsVels[i] + dots[i]).Y < _Height - 1)
+                    //        if ((int)(dotsVels[i] + dots[i]).X >= 0)
+                    //            if ((int)(dotsVels[i] + dots[i]).Y >= 0)
+                    //                if (field[(int)(dots[i]+dotsVels[i]).X, (int)(dots[i] + dotsVels[i]).Y] == Color.White)
+
+                    //                            dots[i] += dotsVels[i];
+
+                    Random rnd = new Random();
+                    field[(int)dots[i].X, (int)dots[i].Y] = Color.Blue;
+                    //foreach (InverseKinematicsReacher paw in paws)
+                    //{
+                    //    int rndInt = rnd.Next(0, dots.Length-1);
+                    //    if ((paw.segments[paw.segments.Length - 1].End - dots[i]).Length < 1)
+                    //    {
+                    //        dots[i] = new Vector2F(new Random().Next(0, (int)_Width), new Random().Next(0, (int)_Height));
+                    //        paw.Target = dots[rndInt];
+                    //    }
+                    //    //paw.Target = dots[rndInt];
+
+                    //}
                 }
 
 
@@ -241,7 +254,7 @@ namespace Perlin_Noise
 
                 for (int i = 0; i < paws.Length; i++)
                 {
-                    paws[i].Target = null;
+                    //paws[i].Target = null;
                     float minDist = 1000;
                     float minPosDist = paws[i].MaxLength;
                     foreach (Vector2F dot in dots)
@@ -262,7 +275,9 @@ namespace Perlin_Noise
                     paws[i].Base = windowMP + positions[i];
 
 
+
                 }
+
 
 
 

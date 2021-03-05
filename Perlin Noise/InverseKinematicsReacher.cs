@@ -46,7 +46,7 @@ namespace Perlin_Noise
                 TransferFrom = segments[segments.Length - 1].End;
                 transferDir = (TransferFrom - TransferTo).Normalized;
                 TransferPos = segments[segments.Length - 1].End;
-                TransferPos -= transferDir / 1;
+                TransferPos -= transferDir * 1;
             }
 
         }
